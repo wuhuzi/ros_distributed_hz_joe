@@ -7,7 +7,7 @@ def callback(data):
 
 def test_sequence_listener():
     rospy.init_node('test_sequence_listener', anonymous=True)
-    rospy.Subscriber("sequences", String, callback)
+    rospy.Subscriber("/Decider/JsonTypeData/Sequences", String, callback)
     rospy.spin()
 
 

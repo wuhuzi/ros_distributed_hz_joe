@@ -30,6 +30,9 @@ def encapsulate_entities(entities,first_pose,second_pose):
     param_entities_list = []
     # 组装param_entity_list todo: this part need to refactor by function method.
     param_entities_dict = {}
+    rospy.loginfo(entities)
+    rospy.loginfo(len(entities))
+    rospy.loginfo(entities[0])
     param_entities_dict["target_lable"] = entities[0]
     param_entities_dict["target_pose"] = first_pose
     param_entities_dict["target_angle"] = 0
@@ -42,13 +45,13 @@ def encapsulate_entities(entities,first_pose,second_pose):
 
     # 封装数据
     param_entities_data['param_entity'] = param_entities_list
-    json.dumps(param_entities_data, ensure_ascii=False)
+    param_entities_json = json.dumps(param_entities_data, ensure_ascii=False)
     return param_entities_json
 
-
+# 全局变量
+pub = rospy.Publisher('/Decider/JsonTypeData/ParamEntities', String, queue_size=10)
 #  publish entities with param
 def pub_param_entities(entities):
-    pub = rospy.Publisher('param_entities', String, queue_size=10)
     param_entities_json = encapsulate_entities(entities,first_pose='',second_pose='')
     pub.publish(param_entities_json)
     rospy.loginfo(param_entities_json)
@@ -58,10 +61,12 @@ def callback(data):
     rospy.loginfo(rospy.get_caller_id() + "I heard %s", data.data)
     # excute pub entities with param
     pub_param_entities(data.data)
+    rospy.loginfo("excute pub entities")
+
 
 def listen_entities():
     rospy.init_node('listen_entities_pub_param_entities', anonymous=True)
-    rospy.Subscriber("entities", String, callback)
+    rospy.Subscriber("/Decider/JsonTypeData/Entities", String, callback)
     rospy.spin()
 
 
